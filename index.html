@@ -1,0 +1,34 @@
+<html>
+<head>	
+	<style type="text/css">
+		#map {
+			width: 800px;
+			height: 500px;
+		}
+
+		body{
+			margin: 20px;
+			background-color: #fafafa;
+		}
+	</style>
+</head>
+<body>
+	<label><h1>Find nearby places</h1></label>
+	<form id="search">
+		<label for="query">Search for:</label>
+		<input type="text" name="query" id="query">
+		<button id="btnSearch">Search</button>
+	</form><br>
+	<div id="container">
+	</div><br>
+	<div id="map">
+		Loading...
+	</div>
+	<script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha256-cCueBR6CsyA4/9szpPfrX3s49M9vUU5BgtiJj06wt/s=" crossorigin="anonymous"></script>
+	<script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBnUmi3a6rWgsRGyAfM4estxUjOduKBJMc&libraries=places"></script>
+	<script type="text/javascript" src="script.js"></script>
+	<script type="text/javascript">
+		mapApi.init();
+	</script>
+</body>
+</html>
