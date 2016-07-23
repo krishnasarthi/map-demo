@@ -11,6 +11,21 @@
 			margin: 20px;
 			background-color: #fafafa;
 		}
+		.pac-icon{
+			display: none !important;
+		}
+		.pac-item {
+			border-top: 1px solid #e6e6e6;
+			color: #999;
+			cursor: default;
+			font-size: 12px;
+			line-height: 40px;
+			overflow: hidden;
+			padding: 0 10px;
+			text-align: left;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+		}
 	</style>
 </head>
 <body>
@@ -68,20 +83,16 @@
 
 	</div>
 	<script src="https://code.jquery.com/jquery-3.1.0.js" integrity="sha256-slogkvB1K3VOkzAI8QITxV3VzpOnkeNVsKvtkYLMjfk=" crossorigin="anonymous"></script>
-	<script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBnUmi3a6rWgsRGyAfM4estxUjOduKBJMc&libraries=places"></script>
+	<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBnUmi3a6rWgsRGyAfM4estxUjOduKBJMc&libraries=places"></script>
 	<script type="text/javascript">
 		var currentCoords = {};
-		var autocomplete;
-
-		/*$('#streetAddress').on('input',function(e){
-			alert('Changed!')
-		});*/
+		var autocomplete = '';
 
 		var showMaps = function(coords){
 			var googleLatLang = new google.maps.LatLng(coords.latitude,coords.longitude);
 
 			var mapOptions = {
-				zoom : 15,
+				zoom : 18,
 				center: googleLatLang,
 				mapTypeControl: false
 			};
@@ -120,11 +131,8 @@
 			postal_code: 'short_name'
 		};
 
-		var fillInAddress = function(){
-			console.log(document.getElementById('streetAddress').value);
-		//google.maps.event.trigger(autocomplete, 'place_changed');
+		var fillInAddress = function() {
 		var place = autocomplete.getPlace();
-
 		if(!place) return;
 
 		var streetAddress = [];
@@ -145,6 +153,8 @@
 		$('#streetAddress').val(streetAddress.join(" "));
 	}
 
+	init();
+
 	function geolocate() {
 		if (navigator.geolocation) {
 			navigator.geolocation.getCurrentPosition(function(position) {
@@ -156,8 +166,6 @@
 					center: geolocation,
 					radius: position.coords.accuracy
 				});
-				init();
-				//google.maps.event.trigger(autocomplete, 'place_changed');
 				autocomplete.setBounds(circle.getBounds());
 			});
 		}
@@ -166,27 +174,36 @@
 	$('#geoCode').click(function(e){
 		e.preventDefault();
 		var address = [];
-		var streetAddress = $('#streetAddress').val();
-		address.push(streetAddress + " ");
 
 		var bldg = $('#aptBldg').val();
-		address.push(bldg + " ");
+		if(bldg && bldg.length>0){
+			address.push(bldg.trim());	
+		}
+
+		var streetAddress = $('#streetAddress').val();
+		address.push(streetAddress.trim());
 
 		var city = $('#locality').val();
-		address.push(city + " ");
+		address.push(city);
 
 		var state = $('#administrative_area_level_1').val();
-		address.push(state + " ");
+		address.push(state);
 
 		var zipcode = $('#postal_code').val();
-		address.push(zipcode + " ");
+		address.push(zipcode);
 
-		var addressString = address.join("");
+		var addressString = address.join();
 
 		console.log(addressString);
 
 		var geocoder = new google.maps.Geocoder();
-		geocoder.geocode( { 'address': addressString}, function(results, status) {
+		var request = {
+			address: addressString,
+			componentRestrictions: {
+				country: 'US'
+			}
+		}
+		geocoder.geocode(request, function(results, status) {
 			if (status == google.maps.GeocoderStatus.OK) {
 				var latitude = results[0].geometry.location.lat();
 				var longitude = results[0].geometry.location.lng();
@@ -202,4 +219,3 @@
 </body>
 </html>
 
-<!-- https://maps.googleapis.com/maps/api/geocode/json?address=1600+Amphitheatre+Parkway,+Mountain+View,+CA&key=YOUR_API_KEY -->
